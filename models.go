@@ -2,8 +2,26 @@ package threeqgo
 
 import "time"
 
-type ProjectsResult struct {
+var StreamTypeVideoOnDemand, StreamTypeLivestream int64 = 1, 2
+
+type ProjectsResponse struct {
 	Projects []Project `json:"Projects"`
+}
+
+type ProjectCreate struct {
+	Label        string `json:"Label"`
+	StreamTypeId int64  `json:"StreamTypeId"` // 1 = Video Platform	| 2 = Video Livestream
+}
+
+type ProjectUpdate struct {
+	Label         string `json:"Label"`
+	TokenSecurity bool   `json:"TokenSecurity"`
+	UsePlayerV5   bool   `json:"UsePlayerV5"`
+}
+
+type ProjectCreateResponse struct {
+	ProjectId int64 `json:"ProjectId"`
+	ChannelId int64 `json:"ChannelId"`
 }
 
 type Project struct {
@@ -25,7 +43,8 @@ type Project struct {
 }
 
 type StreamType struct {
-	ID int64 `json:"Id"`
+	ID    int64  `json:"Id"`
+	Label string `json:"Label"`
 }
 
 type ProjectCategory struct {
@@ -33,4 +52,26 @@ type ProjectCategory struct {
 	Label    string `json:"Label"`
 	CustomId string `json:"CustomId"`
 	ThumbURI string `json:"ThumbURI"`
+}
+
+type ChannelsResponse struct {
+	Channels []Channel `json:"Channels"`
+}
+
+type Channel struct {
+	ID            int64           `json:"Id"`
+	ChannelStatus []ChannelStatus `json:"ChannelStatus"`
+	Project       Project         `json:"Project"`
+}
+
+type ChannelStatus struct {
+	IsOnline     bool   `json:"IsOnline"`
+	IsPrimary    bool   `json:"IsPrimary"`
+	Origin       string `json:"Origin"`
+	VideoFormat  string `json:"VideoFormat"`
+	VideoBitRate int64  `json:"VideoBitRate"`
+	VideoWidth   int64  `json:"VideoWidth"`
+	VideoHeight  int64  `json:"VideoHeight"`
+	AudioFormat  string `json:"AudioFormat"`
+	AudioBitRate int64  `json:"AudioBitRate"`
 }
