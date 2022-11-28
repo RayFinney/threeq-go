@@ -32,7 +32,7 @@ This is a lightweight (no dependencies)  3Q API v2 Go/Golang client.
 - [ ] 04.08 File - Most viewed
 - [ ] 04.09 File - Merge files
 - [ ] 04.10 File - Video intelligence Output
-- [ ] 04.11 File - Encoding Progress
+- [x] 04.11 File - Encoding Progress
 - [ ] 04.12 File - Metadata by ProgrammId
 - [ ] 04.13 File - Text2Speech
 - [ ] 04.14 File - Release Status
