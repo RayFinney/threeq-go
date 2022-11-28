@@ -157,3 +157,60 @@ func TestCreateChannelRecorder(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestEncodeQuery(t *testing.T) {
+	query := encodeQuery(FileSearchOptions{
+		IncludeDeleted:    false,
+		IncludeMetadata:   false,
+		IncludePlayouts:   false,
+		IncludeProperties: false,
+		Offset:            0,
+		Limit:             5,
+	})
+	expect := "?IncludeDeleted=false&IncludeMetadata=false&IncludePlayouts=false&IncludeProperties=false&Limit=5"
+	if query != expect {
+		t.Errorf("expected: %s \n got: %s", expect, query)
+	}
+}
+
+func TestGetFiles(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	files, err := client.GetFiles(49763, FileSearchOptions{
+		IncludeDeleted:    false,
+		IncludeMetadata:   false,
+		IncludePlayouts:   false,
+		IncludeProperties: false,
+		Offset:            0,
+		Limit:             1,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(files) != 1 {
+		t.Errorf("size should be 1 but is %d", len(files))
+	}
+	files, err = client.GetFiles(49763, FileSearchOptions{
+		IncludeDeleted:    false,
+		IncludeMetadata:   false,
+		IncludePlayouts:   false,
+		IncludeProperties: false,
+		Offset:            0,
+		Limit:             5,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(files) != 5 {
+		t.Errorf("size should be 5 but is %d", len(files))
+	}
+}
+
+func TestGetFile(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	file, err := client.GetFile(49763, 6794663)
+	if err != nil && file.ID == 6794663 {
+		t.Fatal(err)
+	}
+}

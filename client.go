@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
+	"strconv"
 	"time"
 )
 
@@ -22,7 +24,10 @@ func (t *threeQGo) checkForErrorsInResponse(response *http.Response) error {
 		return errors.New("no response")
 	}
 	if response.StatusCode >= 400 || response.StatusCode >= 500 {
-		body, _ := io.ReadAll(response.Body)
+		body, err := io.ReadAll(response.Body)
+		if err != nil {
+			fmt.Println(err)
+		}
 		return fmt.Errorf("%s - %s", response.Status, string(body))
 	}
 	return nil
@@ -427,6 +432,107 @@ func (t *threeQGo) ChannelRecorderRemoveCategory(channelID, recorderID, category
 		return Recorder{}, err
 	}
 	var cResponse Recorder
+	err = json.Unmarshal(body, &cResponse)
+	return cResponse, err
+}
+
+func encodeQuery(s interface{}) string {
+	query := ""
+	v := reflect.ValueOf(s)
+	fields := reflect.VisibleFields(reflect.TypeOf(s))
+	for i, field := range fields {
+		value := ""
+		switch field.Type.Kind() {
+		case reflect.String:
+			value = v.Field(i).String()
+		case reflect.Int64:
+			value = strconv.FormatInt(v.Field(i).Int(), 10)
+			break
+		case reflect.Bool:
+			value = strconv.FormatBool(v.Field(i).Bool())
+			break
+		}
+		if value != "" && value != "0" {
+			if i > 0 {
+				query += "&"
+			}
+			query += fmt.Sprintf("%s=%s", field.Name, value)
+		}
+	}
+	if query != "" {
+		query = "?" + query
+	}
+	return query
+}
+
+func (t *threeQGo) GetFiles(projectID int64, queryParams FileSearchOptions) ([]File, error) {
+	if queryParams.Limit == 0 {
+		queryParams.Limit = 100
+	}
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/projects/%d/files%s", basePath, projectID, encodeQuery(queryParams)), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return nil, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return nil, err
+	}
+	var cResponse FilesResponse
+	err = json.Unmarshal(body, &cResponse)
+	return cResponse.Files, err
+}
+
+func (t *threeQGo) GetFile(projectID, fileID int64) (File, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/projects/%d/files/%d", basePath, projectID, fileID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return File{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return File{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return File{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return File{}, err
+	}
+	var cResponse File
+	err = json.Unmarshal(body, &cResponse)
+	return cResponse, err
+}
+
+func (t *threeQGo) GetEncodingProgress(projectID, fileID int64) (EncodingProgress, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/projects/%d/files/%d/progress", basePath, projectID, fileID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return EncodingProgress{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return EncodingProgress{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return EncodingProgress{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return EncodingProgress{}, err
+	}
+	var cResponse EncodingProgress
 	err = json.Unmarshal(body, &cResponse)
 	return cResponse, err
 }

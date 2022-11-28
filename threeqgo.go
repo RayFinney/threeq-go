@@ -88,7 +88,11 @@ type ThreeQGo interface {
 	// TODO
 
 	// Files
-	// TODO
+
+	// GetFiles returns a collection of File in Project
+	GetFiles(projectID int64, queryParams FileSearchOptions) ([]File, error)
+	// GetFile return a File by id in Project
+	GetFile(projectID, fileID int64) (File, error)
 
 	// File - Metadata
 	// TODO
@@ -121,7 +125,9 @@ type ThreeQGo interface {
 	// TODO
 
 	// File - Encoding Progress
-	// TODO
+
+	// GetEncodingProgress return the EncodingProgress of file processing
+	GetEncodingProgress(projectID, fileID int64) (EncodingProgress, error)
 
 	// File - Metadata by ProgrammId
 	// TODO
