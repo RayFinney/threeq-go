@@ -37,7 +37,24 @@ type ThreeQGo interface {
 	// TODO
 
 	// Channels
-	// TODO
+
+	// GetChannels return a collection of available channels
+	GetChannels() ([]Channel, error)
+	GetChannel(id int64) (Channel, error)
+	// GetChannelRecorders return enabled channel recorder
+	GetChannelRecorders() ([]Recorder, error)
+	// GetChannelRecorder return a Recorder by id
+	GetChannelRecorder(channelID, recorderID int64) (Recorder, error)
+	// UpdateChannelRecorder Edit a Recorder
+	UpdateChannelRecorder(channelID, recorderID int64, recorder RecorderUpdate) (Recorder, error)
+	// DeleteChannelRecorder delete a Recorder by id
+	DeleteChannelRecorder(channelID, recorderID int64) error
+	// CreateChannelRecorder create a new Recorder
+	CreateChannelRecorder(channelID, dstProjectID int64, recorder RecorderCreate) (Recorder, error)
+	// ChannelRecorderAddCategory add(link) a Category to the Recorder
+	ChannelRecorderAddCategory(channelID, recorderID, categoryID int64) (Recorder, error)
+	// ChannelRecorderRemoveCategory remove(unlink) a Category from the Recorder
+	ChannelRecorderRemoveCategory(channelID, recorderID, categoryID int64) (Recorder, error)
 
 	// Channel - Picture
 	// TODO

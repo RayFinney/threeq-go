@@ -82,3 +82,78 @@ func TestGetProjectChannels(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestGetChannels(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	channels, err := client.GetChannels()
+	if err != nil || channels[0].ID == 0 {
+		t.Fatal(err)
+	}
+}
+
+func TestGetChannel(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	channels, err := client.GetChannel(50559)
+	if err != nil || channels.ID != 50559 {
+		t.Fatal(err)
+	}
+}
+
+func TestGetChannelRecorders(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.GetChannelRecorders()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetChannelRecorder(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.GetChannelRecorder(50559, 7863)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateChannelRecorder(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.UpdateChannelRecorder(50559, 7863, RecorderUpdate{
+		Title:                "Auto Test",
+		Description:          "Auto Test",
+		AutoRecording:        true,
+		UseRecordingInterval: false,
+		RecordingInterval:    120,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDeleteChannelRecorder(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	err := client.DeleteChannelRecorder(50559, 7863)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCreateChannelRecorder(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.CreateChannelRecorder(50559, 49763, RecorderCreate{
+		Title:                "Auto Test",
+		Description:          "Auto Test",
+		AutoRecording:        true,
+		UseRecordingInterval: false,
+		RecordingInterval:    120,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}

@@ -222,6 +222,215 @@ func (t *threeQGo) DeleteProject(id int64) error {
 	return nil
 }
 
+func (t *threeQGo) GetChannels() ([]Channel, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/channels", basePath), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return nil, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return nil, err
+	}
+	var cResponse ChannelsResponse
+	err = json.Unmarshal(body, &cResponse)
+	return cResponse.Channels, err
+}
+
+func (t *threeQGo) GetChannel(id int64) (Channel, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/channels/%d", basePath, id), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return Channel{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return Channel{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return Channel{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return Channel{}, err
+	}
+	var cResponse Channel
+	err = json.Unmarshal(body, &cResponse)
+	return cResponse, err
+}
+
+func (t *threeQGo) GetChannelRecorders() ([]Recorder, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/channels/recorders", basePath), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return nil, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return nil, err
+	}
+	var cResponse RecordersResponse
+	err = json.Unmarshal(body, &cResponse)
+	return cResponse.ChannelRecorders, err
+}
+
+func (t *threeQGo) GetChannelRecorder(channelID, recorderID int64) (Recorder, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/channels/%d/recorders/%d", basePath, channelID, recorderID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return Recorder{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return Recorder{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return Recorder{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return Recorder{}, err
+	}
+	var cResponse Recorder
+	err = json.Unmarshal(body, &cResponse)
+	return cResponse, err
+}
+
+func (t *threeQGo) UpdateChannelRecorder(channelID, recorderID int64, recorder RecorderUpdate) (Recorder, error) {
+	payloadJson, err := json.Marshal(recorder)
+	if err != nil {
+		return Recorder{}, err
+	}
+	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/channels/%d/recorders/%d", basePath, channelID, recorderID), bytes.NewBuffer(payloadJson))
+	t.setRequestHeaders(req)
+	if err != nil {
+		return Recorder{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return Recorder{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return Recorder{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return Recorder{}, err
+	}
+	var pResult Recorder
+	err = json.Unmarshal(body, &pResult)
+	return pResult, nil
+}
+
+func (t *threeQGo) DeleteChannelRecorder(channelID, recorderID int64) error {
+	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/channels/%d/recorders/%d", basePath, channelID, recorderID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *threeQGo) CreateChannelRecorder(channelID, dstProjectID int64, recorder RecorderCreate) (Recorder, error) {
+	payloadJson, err := json.Marshal(recorder)
+	if err != nil {
+		return Recorder{}, err
+	}
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/channels/%d/recorders/%d", basePath, channelID, dstProjectID), bytes.NewBuffer(payloadJson))
+	t.setRequestHeaders(req)
+	if err != nil {
+		return Recorder{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return Recorder{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return Recorder{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return Recorder{}, err
+	}
+	var pResult Recorder
+	err = json.Unmarshal(body, &pResult)
+	return pResult, nil
+}
+
+func (t *threeQGo) ChannelRecorderAddCategory(channelID, recorderID, categoryID int64) (Recorder, error) {
+	req, err := http.NewRequest(http.MethodPatch, fmt.Sprintf("%s/channels/%d/recorders/%d/categories/%d", basePath, channelID, recorderID, categoryID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return Recorder{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return Recorder{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return Recorder{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return Recorder{}, err
+	}
+	var cResponse Recorder
+	err = json.Unmarshal(body, &cResponse)
+	return cResponse, err
+}
+
+func (t *threeQGo) ChannelRecorderRemoveCategory(channelID, recorderID, categoryID int64) (Recorder, error) {
+	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/channels/%d/recorders/%d/categories/%d", basePath, channelID, recorderID, categoryID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return Recorder{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return Recorder{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return Recorder{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return Recorder{}, err
+	}
+	var cResponse Recorder
+	err = json.Unmarshal(body, &cResponse)
+	return cResponse, err
+}
+
 // NewClient creates a new Client, apiKey and httpClient are optional.
 func NewClient(httpClient *http.Client) ThreeQGo {
 	c := threeQGo{

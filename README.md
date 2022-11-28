@@ -9,7 +9,7 @@ This is a lightweight (no dependencies)  3Q API v2 Go/Golang client.
 - [ ] 02.01 Project - Custom Metadata Definitions
 - [ ] 02.02 Project - FileEncoders
 - [ ] 02.03 Project - FileEncoderPipeline
-- [ ] 03.00 Channels
+- [x] 03.00 Channels
 - [ ] 03.01 Channel - Picture
 - [ ] 03.02 Channel - Metadata
 - [ ] 03.03 Channel - Ingest
@@ -19,6 +19,7 @@ This is a lightweight (no dependencies)  3Q API v2 Go/Golang client.
 - [ ] 03.06 Channel - Transcoder
 - [ ] 03.07 Channel - Distribution
 - [ ] 03.08 Channel - Timeshift2VoD
+- [x] 03.09 Channel - Recorder
 - [ ] 03.10 Channel - Purge Timeshift
 - [ ] 04.00 Files
 - [ ] 04.01 File - Metadata
