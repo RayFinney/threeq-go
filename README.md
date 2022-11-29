@@ -2,12 +2,15 @@
 A 3Q Golang Client.
 This is a lightweight (no dependencies)  3Q API v2 Go/Golang client.
 
+# Installation
+Run ```go get github.com/RayFinney/threeq-go``` to install the client.
+
 # Endpoints implemeted
 - [x] 01.00 Welcome
 - [x] 01.01 ApiKey
 - [x] 02.00 Projects
 - [ ] 02.01 Project - Custom Metadata Definitions
-- [ ] 02.02 Project - FileEncoders
+- [ ] 02.02 Project -go get FileEncoders
 - [ ] 02.03 Project - FileEncoderPipeline
 - [x] 03.00 Channels
 - [ ] 03.01 Channel - Picture

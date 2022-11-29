@@ -152,6 +152,7 @@ type File struct {
 	ErrorMessage     string         `json:"ErrorMessage"`
 	Properties       FileProperties `json:"Properties"`
 	MetaData         MetaData       `json:"MetaData"`
+	Playouts         []Playout      `json:"Playouts"`
 	CreatedAt        time.Time      `json:"CreatedAt"`
 	LastUpdateAt     time.Time      `json:"LastUpdateAt"`
 }
@@ -240,4 +241,9 @@ type EncodingProgress struct {
 	HasErrors        bool    `json:"HasErrors"`
 	IsFinished       bool    `json:"IsFinished"`
 	IsStored         bool    `json:"IsStored"`
+}
+
+type Playout struct {
+	ID    string `json:"Id"`
+	Label string `json:"Label"`
 }

@@ -177,10 +177,10 @@ func TestGetFiles(t *testing.T) {
 	client := NewClient(nil)
 	client.SetAPIKey(os.Getenv("API_KEY"))
 	files, err := client.GetFiles(49763, FileSearchOptions{
-		IncludeDeleted:    false,
-		IncludeMetadata:   false,
-		IncludePlayouts:   false,
-		IncludeProperties: false,
+		IncludeDeleted:    true,
+		IncludeMetadata:   true,
+		IncludePlayouts:   true,
+		IncludeProperties: true,
 		Offset:            0,
 		Limit:             1,
 	})
@@ -191,10 +191,10 @@ func TestGetFiles(t *testing.T) {
 		t.Errorf("size should be 1 but is %d", len(files))
 	}
 	files, err = client.GetFiles(49763, FileSearchOptions{
-		IncludeDeleted:    false,
-		IncludeMetadata:   false,
-		IncludePlayouts:   false,
-		IncludeProperties: false,
+		IncludeDeleted:    true,
+		IncludeMetadata:   true,
+		IncludePlayouts:   true,
+		IncludeProperties: true,
 		Offset:            0,
 		Limit:             5,
 	})
