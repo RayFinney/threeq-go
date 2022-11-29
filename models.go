@@ -152,9 +152,11 @@ type File struct {
 	ErrorMessage     string         `json:"ErrorMessage"`
 	Properties       FileProperties `json:"Properties"`
 	MetaData         MetaData       `json:"MetaData"`
-	Playouts         []Playout      `json:"Playouts"`
-	CreatedAt        time.Time      `json:"CreatedAt"`
-	LastUpdateAt     time.Time      `json:"LastUpdateAt"`
+	Playouts         []struct {
+		Playout Playout `json:"Playout"`
+	} `json:"Playouts"`
+	CreatedAt    time.Time `json:"CreatedAt"`
+	LastUpdateAt time.Time `json:"LastUpdateAt"`
 }
 
 type FileProperties struct {
