@@ -2,6 +2,8 @@
 A 3Q Golang Client.
 This is a lightweight (no dependencies)  3Q API v2 Go/Golang client.
 
+3Q SDN API Documentation: https://sdn.3qsdn.com/api/doc
+3Q SDN Open API Spec: https://sdn.3qsdn.com/api/doc.json
 # Installation
 Run ```go get github.com/RayFinney/threeq-go``` to install the client.
 
@@ -10,10 +12,10 @@ Run ```go get github.com/RayFinney/threeq-go``` to install the client.
 - [x] 01.01 ApiKey
 - [x] 02.00 Projects
 - [ ] 02.01 Project - Custom Metadata Definitions
-- [ ] 02.02 Project -go get FileEncoders
+- [x] 02.02 Project - FileEncoders
 - [ ] 02.03 Project - FileEncoderPipeline
 - [x] 03.00 Channels
-- [ ] 03.01 Channel - Picture
+- [ ] 03.01 Channel - Picture 
 - [ ] 03.02 Channel - Metadata
 - [ ] 03.03 Channel - Ingest
 - [ ] ~~03.03 Channel - Input (Deprecated)~~

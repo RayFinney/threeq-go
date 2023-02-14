@@ -158,6 +158,96 @@ func TestCreateChannelRecorder(t *testing.T) {
 	}
 }
 
+func TestGetFileEncoderSettings(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.GetFileEncoderSettings(49763)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateFileEncoderSettings(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.UpdateFileEncoderSettings(49763, FileEncoderSettingsUpdate{
+		UseEncoding:             true,
+		UsePremiumEncoding:      false,
+		UsePreProcessing:        false,
+		UseAIServices:           false,
+		SourceLanguage:          "eng",
+		GenerateSubtitles:       false,
+		UseDeinterlace:          false,
+		UseTwoPass:              false,
+		UseCMAF:                 false,
+		UseBPFrames:             true,
+		PackageAudioOnlyVariant: false,
+		PackageForDRM:           false,
+		UseWatermark:            false,
+		WatermarkPosition:       "bottom-right",
+		UseCropping:             false,
+		CroppingParameters:      "",
+		NormalizeAudio:          false,
+		UseFirstAudioTrack:      false,
+		UseAllAudioTracks:       false,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetFileFormatSettings(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.GetFileFormatSettings(49763)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetFileFormat(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.GetFileFormat(49763, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUpdateFileFormat(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.UpdateFileFormat(49763, 1, FileFormatUpdate{
+		VideoBitRate:    4000,
+		VideoProfile:    "main",
+		VideoFPS:        25,
+		AudioBitRate:    152,
+		AudioSampleRate: 48000,
+		AudioChannels:   2,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAddFileFormat(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.AddFileFormat(49763, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestRemoveFileFormat(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.RemoveFileFormat(49763, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestEncodeQuery(t *testing.T) {
 	query := encodeQuery(FileSearchOptions{
 		IncludeDeleted:    false,

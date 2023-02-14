@@ -6,13 +6,22 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
+	"net/textproto"
+	"path/filepath"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 )
 
 var basePath = "https://sdn.3qsdn.com/api/v2"
+var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
+
+func EscapeQuotes(s string) string {
+	return quoteEscaper.Replace(s)
+}
 
 type threeQGo struct {
 	httpClient *http.Client
@@ -225,6 +234,208 @@ func (t *threeQGo) DeleteProject(id int64) error {
 		return err
 	}
 	return nil
+}
+
+func (t *threeQGo) GetFileEncoderSettings(projectID int64) (FileEncodingSetting, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/projects/%d/fileencodersettings", basePath, projectID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return FileEncodingSetting{}, err
+	}
+	var settings FileEncodingSetting
+	err = json.Unmarshal(body, &settings)
+	return settings, err
+}
+
+func (t *threeQGo) UpdateFileEncoderSettings(projectID int64, settings FileEncoderSettingsUpdate) (FileEncodingSetting, error) {
+	payloadJson, err := json.Marshal(settings)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/projects/%d/fileencodersettings", basePath, projectID), bytes.NewBuffer(payloadJson))
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return FileEncodingSetting{}, err
+	}
+	var sResult FileEncodingSetting
+	err = json.Unmarshal(body, &sResult)
+	return sResult, nil
+}
+
+func (t *threeQGo) SetWatermarkPicture(projectID int64, filename, contentType string, watermark io.Reader) error {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	h := make(textproto.MIMEHeader)
+	h.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
+		EscapeQuotes("file"), EscapeQuotes(filepath.Base(filename))))
+	h.Set("Content-Type", contentType)
+	part, _ := writer.CreatePart(h)
+	_, err := io.Copy(part, watermark)
+	if err != nil {
+		return err
+	}
+	err = writer.Close()
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/projects/%d/fileencodersettings/watermarkpicture", basePath, projectID), body)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return err
+	}
+
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t *threeQGo) GetFileFormatSettings(projectID int64) (FileFormatSettings, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/projects/%d/fileformatsettings", basePath, projectID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileFormatSettings{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileFormatSettings{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileFormatSettings{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return FileFormatSettings{}, err
+	}
+	var settings FileFormatSettings
+	err = json.Unmarshal(body, &settings)
+	return settings, err
+}
+
+func (t *threeQGo) GetFileFormat(projectID int64, fileFormatID int64) (FileFormat, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/projects/%d/fileformatsettings/%d", basePath, projectID, fileFormatID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileFormat{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileFormat{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileFormat{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return FileFormat{}, err
+	}
+	var settings FileFormat
+	err = json.Unmarshal(body, &settings)
+	return settings, err
+}
+
+func (t *threeQGo) AddFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error) {
+	req, err := http.NewRequest(http.MethodPatch, fmt.Sprintf("%s/projects/%d/fileencodersettings/fileformat/%d", basePath, projectID, fileFormatID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return FileEncodingSetting{}, err
+	}
+	var settings FileEncodingSetting
+	err = json.Unmarshal(body, &settings)
+	return settings, err
+}
+
+func (t *threeQGo) RemoveFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error) {
+	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/projects/%d/fileencodersettings/fileformat/%d", basePath, projectID, fileFormatID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return FileEncodingSetting{}, err
+	}
+	var settings FileEncodingSetting
+	err = json.Unmarshal(body, &settings)
+	return settings, err
+}
+
+func (t *threeQGo) UpdateFileFormat(projectID int64, fileFormatID int64, fileFormat FileFormatUpdate) (FileFormat, error) {
+	payloadJson, err := json.Marshal(fileFormat)
+	if err != nil {
+		return FileFormat{}, err
+	}
+	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/projects/%d/fileformatsettings/%d", basePath, projectID, fileFormatID), bytes.NewBuffer(payloadJson))
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileFormat{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileFormat{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileFormat{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response); err != nil {
+		return FileFormat{}, err
+	}
+	var sResult FileFormat
+	err = json.Unmarshal(body, &sResult)
+	return sResult, nil
 }
 
 func (t *threeQGo) GetChannels() ([]Channel, error) {

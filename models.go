@@ -249,3 +249,86 @@ type Playout struct {
 	ID    string `json:"Id"`
 	Label string `json:"Label"`
 }
+
+type FileEncodingSetting struct {
+	UseEncoding             bool             `json:"UseEncoding"`
+	UsePremiumEncoding      bool             `json:"UsePremiumEncoding"`
+	UsePreProcessing        bool             `json:"UsePreProcessing"`
+	UseAIServices           bool             `json:"UseAIServices"`
+	ISOLanguageCode         string           `json:"ISOLanguageCode"`
+	GenerateSubtitles       bool             `json:"GenerateSubtitles"`
+	UseDeinterlace          bool             `json:"UseDeinterlace"`
+	UseTwoPass              bool             `json:"UseTwoPass"`
+	UseCMAF                 bool             `json:"UseCMAF"`
+	UseBPFrames             bool             `json:"UseBPFrames"`
+	PackageAudioOnlyVariant bool             `json:"PackageAudioOnlyVariant"`
+	PackageForDRM           bool             `json:"PackageForDRM"`
+	UseWatermark            bool             `json:"UseWatermark"`
+	WatermarkURI            string           `json:"WatermarkURI"`
+	WatermarkPosition       string           `json:"WatermarkPosition"` // top-left, top-right, bottom-left, bottom-right
+	UseCropping             bool             `json:"UseCropping"`
+	CroppingParameters      string           `json:"CroppingParameters"`
+	NormalizeAudio          bool             `json:"NormalizeAudio"`
+	UseFirstAudioTrack      bool             `json:"UseFirstAudioTrack"`
+	UseAllAudioTracks       bool             `json:"UseAllAudioTracks"`
+	FileFormats             []FileFormat     `json:"FileFormats"`
+	AIFunctions             []AiconixJobType `json:"AIFunctions"`
+}
+
+type FileEncoderSettingsUpdate struct {
+	UseEncoding             bool     `json:"UseEncoding"`
+	UseCMAF                 bool     `json:"UseCMAF"`
+	UsePremiumEncoding      bool     `json:"UsePremiumEncoding"`
+	UsePreProcessing        bool     `json:"UsePreProcessing"`
+	UseAIServices           bool     `json:"UseAIServices"`
+	GenerateSubtitles       bool     `json:"GenerateSubtitles"`
+	SourceLanguage          string   `json:"SourceLanguage,omitempty"`
+	SubtitleTranslation     []string `json:"SubtitleTranslation,omitempty"`
+	UseDeinterlace          bool     `json:"UseDeinterlace"`
+	UseTwoPass              bool     `json:"UseTwoPass"`
+	UseBPFrames             bool     `json:"UseBPFrames"`
+	UseCropping             bool     `json:"UseCropping"`
+	CroppingParameters      string   `json:"CroppingParameters,omitempty"`
+	NormalizeAudio          bool     `json:"NormalizeAudio"`
+	UseFirstAudioTrack      bool     `json:"UseFirstAudioTrack"`
+	UseAllAudioTracks       bool     `json:"UseAllAudioTracks"`
+	PackageAudioOnlyVariant bool     `json:"PackageAudioOnlyVariant"`
+	PackageForDRM           bool     `json:"PackageForDRM"`
+	WatermarkPosition       string   `json:"WatermarkPosition"` // top-left, top-right, bottom-left, bottom-right
+	UseWatermark            bool     `json:"UseWatermark"`
+}
+
+type FileFormat struct {
+	FileFormatID    int64   `json:"FileFormatId"`
+	Label           string  `json:"Label"`
+	MIMEType        string  `json:"MIME-Type"`
+	VideoCodec      string  `json:"VideoCodec"`
+	VideoHeight     int64   `json:"VideoHeight"`
+	VideoBitRate    int64   `json:"VideoBitRate"`
+	VideoProfile    string  `json:"VideoProfile"`
+	VideoFPS        float64 `json:"VideoFPS"`
+	AudioBitRate    int64   `json:"AudioBitRate"`
+	AudioSampleRate int64   `json:"AudioSampleRate"`
+	AudioChannels   int64   `json:"AudioChannels"`
+}
+
+type FileFormatUpdate struct {
+	VideoBitRate    int64   `json:"VideoBitRate"`
+	VideoProfile    string  `json:"VideoProfile"`
+	VideoFPS        float64 `json:"VideoFPS"`
+	AudioBitRate    int64   `json:"AudioBitRate"`
+	AudioSampleRate int64   `json:"AudioSampleRate"`
+	AudioChannels   int64   `json:"AudioChannels"`
+}
+
+type AiconixJobType struct {
+	ID             int64  `json:"Id"`
+	AIFunction     string `json:"AIFunction"`     // blockdetection, keywords, labeldetection, objecttracking, shotdetection, speechtotext, contentmoderation, emotion, facedetection, facialattributes, iabcategories, landmarks, ocr, persontracking
+	AIResultType   string `json:"AIResultType"`   // rawresult, bestresult
+	SourceLanguage string `json:"SourceLanguage"` // ISO-639-2/b (three-letter codes) Language Code
+	TranslateTo    string `json:"TranslateTo"`    // ISO-639-2/b (three-letter codes) Language Code
+}
+
+type FileFormatSettings struct {
+	FileFormatSettings []FileFormat `json:"FileFormatSettings"`
+}

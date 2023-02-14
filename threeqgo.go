@@ -1,5 +1,7 @@
 package threeqgo
 
+import "io"
+
 type ThreeQGo interface {
 	// Utility
 
@@ -31,7 +33,23 @@ type ThreeQGo interface {
 	// TODO
 
 	// Project - FileEncoders
-	// TODO
+
+	// GetFileEncoderSettings return the global settings of FileEncoding in a Video on Demand project
+	GetFileEncoderSettings(projectID int64) (FileEncodingSetting, error)
+	// UpdateFileEncoderSettings set the global settings for FileEncoding in a Video on Demand project
+	UpdateFileEncoderSettings(projectID int64, settings FileEncoderSettingsUpdate) (FileEncodingSetting, error)
+	// SetWatermarkPicture set a image as watermark
+	SetWatermarkPicture(projectID int64, filename, contentType string, watermark io.Reader) error
+	// GetFileFormatSettings return all global FileFormatSettings of a Video on Demand project
+	GetFileFormatSettings(projectID int64) (FileFormatSettings, error)
+	// GetFileFormat return a FileFormat of a Video on Demand project
+	GetFileFormat(projectID int64, fileFormatID int64) (FileFormat, error)
+	// UpdateFileFormat Set a FileFormat setting of a Video on Demand project
+	UpdateFileFormat(projectID int64, fileFormatID int64, fileFormat FileFormatUpdate) (FileFormat, error)
+	// AddFileFormat add (link) FileFormat to the FileEncoderSettings
+	AddFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error)
+	// RemoveFileFormat removes (unlink) FileFormat from the FileEncoderSettings
+	RemoveFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error)
 
 	// Project - FileEncoderPipeline
 	// TODO
