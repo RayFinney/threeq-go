@@ -230,19 +230,37 @@ func TestUpdateFileFormat(t *testing.T) {
 	}
 }
 
-func TestAddFileFormat(t *testing.T) {
+func TestAddEncoderSettingsFileFormat(t *testing.T) {
 	client := NewClient(nil)
 	client.SetAPIKey(os.Getenv("API_KEY"))
-	_, err := client.AddFileFormat(49763, 1)
+	_, err := client.AddEncoderSettingsFileFormat(49763, 1)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
-func TestRemoveFileFormat(t *testing.T) {
+func TestRemoveEncoderSettingsFileFormat(t *testing.T) {
 	client := NewClient(nil)
 	client.SetAPIKey(os.Getenv("API_KEY"))
-	_, err := client.RemoveFileFormat(49763, 1)
+	_, err := client.RemoveEncoderSettingsFileFormat(49763, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetEncodingPipeline(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.GetEncodingPipeline(49763)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestGetEncodingPipelineFile(t *testing.T) {
+	client := NewClient(nil)
+	client.SetAPIKey(os.Getenv("API_KEY"))
+	_, err := client.GetEncodingPipelineFile(49763, 7309861)
 	if err != nil {
 		t.Fatal(err)
 	}

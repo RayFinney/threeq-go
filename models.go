@@ -62,6 +62,8 @@ type Channel struct {
 	ID            int64           `json:"Id"`
 	ChannelStatus []ChannelStatus `json:"ChannelStatus"`
 	Project       Project         `json:"Project"`
+	CreatedAt     time.Time       `json:"CreatedAt"`
+	LastUpdatedAt time.Time       `json:"LastUpdatedAt"`
 }
 
 type ChannelStatus struct {
@@ -331,4 +333,15 @@ type AiconixJobType struct {
 
 type FileFormatSettings struct {
 	FileFormatSettings []FileFormat `json:"FileFormatSettings"`
+}
+
+type FileEncoderPipeline struct {
+	PipelineID            int64 `json:"PipelineId"`
+	FileID                int64 `json:"FileId"`
+	TimeFromStart         int64 `json:"TimeFromStart"`
+	Duration              int64 `json:"Duration"`
+	RemoveAudio           bool  `json:"RemoveAudio"`
+	ExtractAudioChannel   bool  `json:"ExtractAudioChannel"`
+	AudioChannelToExtract int64 `json:"AudioChannelToExtract"`
+	FileEncodingSetting
 }

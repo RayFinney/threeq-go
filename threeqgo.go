@@ -46,13 +46,23 @@ type ThreeQGo interface {
 	GetFileFormat(projectID int64, fileFormatID int64) (FileFormat, error)
 	// UpdateFileFormat Set a FileFormat setting of a Video on Demand project
 	UpdateFileFormat(projectID int64, fileFormatID int64, fileFormat FileFormatUpdate) (FileFormat, error)
-	// AddFileFormat add (link) FileFormat to the FileEncoderSettings
-	AddFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error)
-	// RemoveFileFormat removes (unlink) FileFormat from the FileEncoderSettings
-	RemoveFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error)
+	// AddEncoderSettingsFileFormat add (link) FileFormat to the FileEncoderSettings
+	AddEncoderSettingsFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error)
+	// RemoveEncoderSettingsFileFormat removes (unlink) FileFormat from the FileEncoderSettings
+	RemoveEncoderSettingsFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error)
 
 	// Project - FileEncoderPipeline
-	// TODO
+
+	// GetEncodingPipeline return the assets in the encoding pipeline of a video on demand project
+	GetEncodingPipeline(projectID int64) ([]FileEncoderPipeline, error)
+	// GetEncodingPipelineFile return the pipeline asset of the specified file of a video in demand project
+	GetEncodingPipelineFile(projectID int64, fileID int64) (FileEncoderPipeline, error)
+	// UpdateEncodingPipelineFile set the pipeline asset settings if the specified file of a video in demand project
+	UpdateEncodingPipelineFile(projectID int64, fileID int64, settings FileEncoderSettingsUpdate) (FileEncoderPipeline, error)
+	// AddEncodingPipelineFileFileFormat add (link) FileFormat to the FileEncoderSettings
+	AddEncodingPipelineFileFileFormat(projectID int64, fileID int64, fileFormatID int64) (FileEncodingSetting, error)
+	// RemoveEncodingPipelineFileFileFormat removes (unlink) FileFormat from the FileEncoderSettings
+	RemoveEncodingPipelineFileFileFormat(projectID int64, fileID int64, fileFormatID int64) (FileEncodingSetting, error)
 
 	// Channels
 

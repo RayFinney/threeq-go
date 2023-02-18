@@ -28,15 +28,11 @@ type threeQGo struct {
 	apiKey     string
 }
 
-func (t *threeQGo) checkForErrorsInResponse(response *http.Response) error {
+func (t *threeQGo) checkForErrorsInResponse(response *http.Response, body []byte) error {
 	if response == nil {
 		return errors.New("no response")
 	}
 	if response.StatusCode >= 400 || response.StatusCode >= 500 {
-		body, err := io.ReadAll(response.Body)
-		if err != nil {
-			fmt.Println(err)
-		}
 		return fmt.Errorf("%s - %s", response.Status, string(body))
 	}
 	return nil
@@ -71,7 +67,7 @@ func (t *threeQGo) GetAPIKeyByUser(username, password string) (string, error) {
 		return "", err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return "", err
 	}
 
@@ -92,8 +88,12 @@ func (t *threeQGo) Welcome() error {
 	if err != nil {
 		return err
 	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
 	defer response.Body.Close()
-	return t.checkForErrorsInResponse(response)
+	return t.checkForErrorsInResponse(response, body)
 }
 
 func (t *threeQGo) GetProjects() ([]Project, error) {
@@ -111,7 +111,7 @@ func (t *threeQGo) GetProjects() ([]Project, error) {
 		return nil, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return nil, err
 	}
 	var pResult ProjectsResponse
@@ -138,7 +138,7 @@ func (t *threeQGo) CreateProject(project ProjectCreate) (ProjectCreateResponse, 
 		return ProjectCreateResponse{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return ProjectCreateResponse{}, err
 	}
 	var pResult ProjectCreateResponse
@@ -161,7 +161,7 @@ func (t *threeQGo) GetProject(id int64) (Project, error) {
 		return Project{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return Project{}, err
 	}
 	var project Project
@@ -188,7 +188,7 @@ func (t *threeQGo) UpdateProject(id int64, project ProjectUpdate) (Project, erro
 		return Project{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return Project{}, err
 	}
 	var pResult Project
@@ -211,7 +211,7 @@ func (t *threeQGo) GetProjectChannels(id int64) ([]Channel, error) {
 		return nil, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return nil, err
 	}
 	var cResponse ChannelsResponse
@@ -229,8 +229,12 @@ func (t *threeQGo) DeleteProject(id int64) error {
 	if err != nil {
 		return err
 	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return err
 	}
 	return nil
@@ -251,7 +255,7 @@ func (t *threeQGo) GetFileEncoderSettings(projectID int64) (FileEncodingSetting,
 		return FileEncodingSetting{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return FileEncodingSetting{}, err
 	}
 	var settings FileEncodingSetting
@@ -278,7 +282,7 @@ func (t *threeQGo) UpdateFileEncoderSettings(projectID int64, settings FileEncod
 		return FileEncodingSetting{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return FileEncodingSetting{}, err
 	}
 	var sResult FileEncodingSetting
@@ -312,8 +316,12 @@ func (t *threeQGo) SetWatermarkPicture(projectID int64, filename, contentType st
 	if err != nil {
 		return err
 	}
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, responseBody); err != nil {
 		return err
 	}
 	return nil
@@ -334,7 +342,7 @@ func (t *threeQGo) GetFileFormatSettings(projectID int64) (FileFormatSettings, e
 		return FileFormatSettings{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return FileFormatSettings{}, err
 	}
 	var settings FileFormatSettings
@@ -357,7 +365,7 @@ func (t *threeQGo) GetFileFormat(projectID int64, fileFormatID int64) (FileForma
 		return FileFormat{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return FileFormat{}, err
 	}
 	var settings FileFormat
@@ -365,7 +373,7 @@ func (t *threeQGo) GetFileFormat(projectID int64, fileFormatID int64) (FileForma
 	return settings, err
 }
 
-func (t *threeQGo) AddFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error) {
+func (t *threeQGo) AddEncoderSettingsFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error) {
 	req, err := http.NewRequest(http.MethodPatch, fmt.Sprintf("%s/projects/%d/fileencodersettings/fileformat/%d", basePath, projectID, fileFormatID), nil)
 	t.setRequestHeaders(req)
 	if err != nil {
@@ -380,7 +388,7 @@ func (t *threeQGo) AddFileFormat(projectID int64, fileFormatID int64) (FileEncod
 		return FileEncodingSetting{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return FileEncodingSetting{}, err
 	}
 	var settings FileEncodingSetting
@@ -388,7 +396,7 @@ func (t *threeQGo) AddFileFormat(projectID int64, fileFormatID int64) (FileEncod
 	return settings, err
 }
 
-func (t *threeQGo) RemoveFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error) {
+func (t *threeQGo) RemoveEncoderSettingsFileFormat(projectID int64, fileFormatID int64) (FileEncodingSetting, error) {
 	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/projects/%d/fileencodersettings/fileformat/%d", basePath, projectID, fileFormatID), nil)
 	t.setRequestHeaders(req)
 	if err != nil {
@@ -403,7 +411,126 @@ func (t *threeQGo) RemoveFileFormat(projectID int64, fileFormatID int64) (FileEn
 		return FileEncodingSetting{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
+		return FileEncodingSetting{}, err
+	}
+	var settings FileEncodingSetting
+	err = json.Unmarshal(body, &settings)
+	return settings, err
+}
+
+func (t *threeQGo) GetEncodingPipeline(projectID int64) ([]FileEncoderPipeline, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/projects/%d/pipeline", basePath, projectID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return nil, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
+		return nil, err
+	}
+	var assets []FileEncoderPipeline
+	err = json.Unmarshal(body, &assets)
+	return assets, err
+}
+
+func (t *threeQGo) GetEncodingPipelineFile(projectID int64, fileID int64) (FileEncoderPipeline, error) {
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/projects/%d/pipeline/%d", basePath, projectID, fileID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileEncoderPipeline{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileEncoderPipeline{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileEncoderPipeline{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
+		return FileEncoderPipeline{}, err
+	}
+	var asset FileEncoderPipeline
+	err = json.Unmarshal(body, &asset)
+	return asset, err
+}
+
+func (t *threeQGo) UpdateEncodingPipelineFile(projectID int64, fileID int64, settings FileEncoderSettingsUpdate) (FileEncoderPipeline, error) {
+	payloadJson, err := json.Marshal(settings)
+	if err != nil {
+		return FileEncoderPipeline{}, err
+	}
+	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/projects/%d/pipeline/%d", basePath, projectID, fileID), bytes.NewBuffer(payloadJson))
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileEncoderPipeline{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileEncoderPipeline{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileEncoderPipeline{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
+		return FileEncoderPipeline{}, err
+	}
+	var sResult FileEncoderPipeline
+	err = json.Unmarshal(body, &sResult)
+	return sResult, nil
+}
+
+func (t *threeQGo) AddEncodingPipelineFileFileFormat(projectID int64, fileID int64, fileFormatID int64) (FileEncodingSetting, error) {
+	req, err := http.NewRequest(http.MethodPatch, fmt.Sprintf("%s/projects/%d/pipeline/%d/fileformat/%d", basePath, projectID, fileID, fileFormatID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
+		return FileEncodingSetting{}, err
+	}
+	var settings FileEncodingSetting
+	err = json.Unmarshal(body, &settings)
+	return settings, err
+}
+
+func (t *threeQGo) RemoveEncodingPipelineFileFileFormat(projectID int64, fileID int64, fileFormatID int64) (FileEncodingSetting, error) {
+	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/projects/%d/pipeline/%d/fileformat/%d", basePath, projectID, fileID, fileFormatID), nil)
+	t.setRequestHeaders(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	response, err := t.httpClient.Do(req)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return FileEncodingSetting{}, err
+	}
+	defer response.Body.Close()
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return FileEncodingSetting{}, err
 	}
 	var settings FileEncodingSetting
@@ -430,7 +557,7 @@ func (t *threeQGo) UpdateFileFormat(projectID int64, fileFormatID int64, fileFor
 		return FileFormat{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return FileFormat{}, err
 	}
 	var sResult FileFormat
@@ -453,7 +580,7 @@ func (t *threeQGo) GetChannels() ([]Channel, error) {
 		return nil, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return nil, err
 	}
 	var cResponse ChannelsResponse
@@ -476,7 +603,7 @@ func (t *threeQGo) GetChannel(id int64) (Channel, error) {
 		return Channel{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return Channel{}, err
 	}
 	var cResponse Channel
@@ -499,7 +626,7 @@ func (t *threeQGo) GetChannelRecorders() ([]Recorder, error) {
 		return nil, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return nil, err
 	}
 	var cResponse RecordersResponse
@@ -522,7 +649,7 @@ func (t *threeQGo) GetChannelRecorder(channelID, recorderID int64) (Recorder, er
 		return Recorder{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return Recorder{}, err
 	}
 	var cResponse Recorder
@@ -549,7 +676,7 @@ func (t *threeQGo) UpdateChannelRecorder(channelID, recorderID int64, recorder R
 		return Recorder{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return Recorder{}, err
 	}
 	var pResult Recorder
@@ -567,8 +694,12 @@ func (t *threeQGo) DeleteChannelRecorder(channelID, recorderID int64) error {
 	if err != nil {
 		return err
 	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return err
 	}
 	return nil
@@ -593,7 +724,7 @@ func (t *threeQGo) CreateChannelRecorder(channelID, dstProjectID int64, recorder
 		return Recorder{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return Recorder{}, err
 	}
 	var pResult Recorder
@@ -616,7 +747,7 @@ func (t *threeQGo) ChannelRecorderAddCategory(channelID, recorderID, categoryID 
 		return Recorder{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return Recorder{}, err
 	}
 	var cResponse Recorder
@@ -639,7 +770,7 @@ func (t *threeQGo) ChannelRecorderRemoveCategory(channelID, recorderID, category
 		return Recorder{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return Recorder{}, err
 	}
 	var cResponse Recorder
@@ -694,7 +825,7 @@ func (t *threeQGo) GetFiles(projectID int64, queryParams FileSearchOptions) ([]F
 		return nil, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return nil, err
 	}
 	var cResponse FilesResponse
@@ -717,7 +848,7 @@ func (t *threeQGo) GetFile(projectID, fileID int64) (File, error) {
 		return File{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return File{}, err
 	}
 	var cResponse File
@@ -740,7 +871,7 @@ func (t *threeQGo) GetEncodingProgress(projectID, fileID int64) (EncodingProgres
 		return EncodingProgress{}, err
 	}
 	defer response.Body.Close()
-	if err := t.checkForErrorsInResponse(response); err != nil {
+	if err := t.checkForErrorsInResponse(response, body); err != nil {
 		return EncodingProgress{}, err
 	}
 	var cResponse EncodingProgress
